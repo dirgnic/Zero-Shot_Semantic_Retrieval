@@ -40,6 +40,8 @@ This makes the RQ2 comparison explicit before model scoring.
 
 Mind-map, process-flow, and overlap-classification diagrams are in
 [`docs/diagrams/retrieval_pipeline.md`](docs/diagrams/retrieval_pipeline.md).
+Actual TF-IDF validation-result diagrams are in
+[`docs/diagrams/validation_results.md`](docs/diagrams/validation_results.md).
 
 ## Setup
 
