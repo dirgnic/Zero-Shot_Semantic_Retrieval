@@ -9,6 +9,20 @@ python3 scripts/run_retrieval.py --split validation --methods tfidf --max-rows 5
 The run covers all 20 ordered source-target idiom pairs with 500 aligned rows
 per pair, for 10,000 retrieval queries in total.
 
+## Classification Blob View
+
+![Lexical-overlap classification blobs](assets/classification_blobs.svg)
+
+This view shows the bucket assignment visually: rows are first separated by
+their pair-specific lexical-overlap quantiles, then each bucket is evaluated.
+
+## Result Blob View
+
+![TF-IDF validation results by overlap bucket](assets/result_blobs.svg)
+
+The bucket sizes are similar, but the retrieval quality is not: the low-overlap
+blob has much lower Recall@1 and a much higher mean rank.
+
 ## PCR: Validation Run
 
 ```mermaid

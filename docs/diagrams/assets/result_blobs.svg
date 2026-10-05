@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="980" height="500" viewBox="0 0 980 500" role="img" aria-labelledby="title desc">
+  <title id="title">TF-IDF validation results by overlap bucket</title>
+  <desc id="desc">Blob diagram showing validation row counts and TF-IDF retrieval quality for low, mid, high, and all overlap buckets.</desc>
+  <defs>
+    <style>
+      .title { font: 700 24px Arial, sans-serif; fill: #17202a; }
+      .subtitle { font: 15px Arial, sans-serif; fill: #4a5568; }
+      .bucket { font: 700 21px Arial, sans-serif; fill: #17202a; }
+      .metric { font: 700 18px Arial, sans-serif; fill: #17202a; }
+      .small { font: 13px Arial, sans-serif; fill: #4a5568; }
+      .tiny { font: 12px Arial, sans-serif; fill: #4a5568; }
+      .blob-low { fill: #f06f78; fill-opacity: 0.20; stroke: #d44d59; stroke-width: 2.2; }
+      .blob-mid { fill: #f2b84b; fill-opacity: 0.22; stroke: #c98a15; stroke-width: 2.2; }
+      .blob-high { fill: #42b883; fill-opacity: 0.22; stroke: #228a5b; stroke-width: 2.2; }
+      .blob-all { fill: #68a4f0; fill-opacity: 0.18; stroke: #3674bd; stroke-width: 2.2; }
+      .bar-bg { fill: #edf1f7; }
+      .bar-low { fill: #d44d59; }
+      .bar-mid { fill: #c98a15; }
+      .bar-high { fill: #228a5b; }
+      .bar-all { fill: #3674bd; }
+      .panel { fill: #ffffff; stroke: #d8dee8; stroke-width: 1.4; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="980" height="500" fill="#fbfcfe" />
+  <text x="40" y="48" class="title">Validation results as bucket blobs</text>
+  <text x="40" y="76" class="subtitle">Each blob is one overlap bucket from the TF-IDF validation smoke run.</text>
+
+  <ellipse cx="178" cy="245" rx="135" ry="118" class="blob-low" />
+  <ellipse cx="406" cy="245" rx="137" ry="120" class="blob-mid" />
+  <ellipse cx="634" cy="245" rx="135" ry="118" class="blob-high" />
+  <ellipse cx="844" cy="245" rx="104" ry="92" class="blob-all" />
+
+  <g>
+    <text x="136" y="166" class="bucket">Low</text>
+    <text x="125" y="192" class="small">3,300 rows</text>
+    <text x="107" y="235" class="metric">Recall@1 0.540</text>
+    <rect x="111" y="248" width="134" height="13" rx="6.5" class="bar-bg" />
+    <rect x="111" y="248" width="72" height="13" rx="6.5" class="bar-low" />
+    <text x="119" y="286" class="small">MRR 0.628</text>
+    <text x="119" y="307" class="small">mean rank 20.47</text>
+  </g>
+
+  <g>
+    <text x="369" y="166" class="bucket">Mid</text>
+    <text x="352" y="192" class="small">3,398 rows</text>
+    <text x="335" y="235" class="metric">Recall@1 0.923</text>
+    <rect x="339" y="248" width="134" height="13" rx="6.5" class="bar-bg" />
+    <rect x="339" y="248" width="124" height="13" rx="6.5" class="bar-mid" />
+    <text x="347" y="286" class="small">MRR 0.951</text>
+    <text x="347" y="307" class="small">mean rank 1.22</text>
+  </g>
+
+  <g>
+    <text x="591" y="166" class="bucket">High</text>
+    <text x="581" y="192" class="small">3,302 rows</text>
+    <text x="563" y="235" class="metric">Recall@1 0.978</text>
+    <rect x="567" y="248" width="134" height="13" rx="6.5" class="bar-bg" />
+    <rect x="567" y="248" width="131" height="13" rx="6.5" class="bar-high" />
+    <text x="575" y="286" class="small">MRR 0.986</text>
+    <text x="575" y="307" class="small">mean rank 1.05</text>
+  </g>
+
+  <g>
+    <text x="820" y="175" class="bucket">All</text>
+    <text x="804" y="199" class="small">10,000 rows</text>
+    <text x="780" y="235" class="metric">Recall@1 0.815</text>
+    <rect x="784" y="248" width="120" height="13" rx="6.5" class="bar-bg" />
+    <rect x="784" y="248" width="98" height="13" rx="6.5" class="bar-all" />
+    <text x="794" y="286" class="small">MRR 0.856</text>
+    <text x="794" y="307" class="small">mean rank 7.52</text>
+  </g>
+
+  <rect x="55" y="390" width="870" height="70" rx="8" class="panel" />
+  <text x="78" y="421" class="metric">Reading the blobs</text>
+  <text x="78" y="445" class="small">Low-overlap rows are the stress condition: similar row count, much lower Recall@1, and a much worse mean rank.</text>
+</svg>
