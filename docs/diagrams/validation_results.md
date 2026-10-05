@@ -1,4 +1,4 @@
-# Actual Validation Results Diagrams
+# Validation Results Diagrams
 
 These diagrams summarize the current TF-IDF validation smoke run:
 
@@ -9,7 +9,7 @@ python3 scripts/run_retrieval.py --split validation --methods tfidf --max-rows 5
 The run covers all 20 ordered source-target idiom pairs with 500 aligned rows
 per pair, for 10,000 retrieval queries in total.
 
-## PCR: Actual Run
+## PCR: Validation Run
 
 ```mermaid
 flowchart LR
@@ -81,7 +81,7 @@ flowchart TD
     A --> E["rm-puter -> rm-surmiran<br/>0.412"]
 ```
 
-## Actual Summary Table
+## Summary Table
 
 | Bucket | Rows | Recall@1 | MRR | Mean rank |
 | --- | ---: | ---: | ---: | ---: |

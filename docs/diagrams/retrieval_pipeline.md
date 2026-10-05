@@ -3,7 +3,7 @@
 These diagrams explain how the retrieval branch separates the data, classifies
 lexical-overlap cases, and reports results.
 
-For diagrams based on the actual TF-IDF validation smoke run, see
+For diagrams based on the TF-IDF validation smoke run, see
 [`validation_results.md`](validation_results.md).
 
 ## Mind Map
