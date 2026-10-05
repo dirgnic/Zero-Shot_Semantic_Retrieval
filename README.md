@@ -64,6 +64,12 @@ Run a quick TF-IDF retrieval experiment:
 python3 scripts/run_retrieval.py --split validation --methods tfidf --max-rows 1000
 ```
 
+Summarize a report:
+
+```bash
+python3 scripts/summarize_report.py reports/retrieval_validation.csv
+```
+
 Run TF-IDF plus zero-shot embeddings after installing the optional backend:
 
 ```bash
