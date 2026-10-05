@@ -36,6 +36,11 @@ For each evaluated source-target pair, overlap is measured with character
 reported as `low`, the top third as `high`, and the middle third as `mid`.
 This makes the RQ2 comparison explicit before model scoring.
 
+## Diagrams
+
+Mind-map, process-flow, and overlap-classification diagrams are in
+[`docs/diagrams/retrieval_pipeline.md`](docs/diagrams/retrieval_pipeline.md).
+
 ## Setup
 
 ```bash
