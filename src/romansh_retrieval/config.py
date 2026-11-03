@@ -17,6 +17,9 @@ HF_PARQUET_URL = (
 )
 
 DEFAULT_MODEL = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+XLM_R_MODEL = "FacebookAI/xlm-roberta-base"
+DEFAULT_MODELS = (DEFAULT_MODEL, XLM_R_MODEL)
+DEFAULT_MAX_SEQ_LENGTH = 128
 
 
 def all_pairs():

@@ -5,5 +5,5 @@ __pycache__/
 
 data/raw/*.parquet
 data/raw/*.tmp
-reports/*.csv
-reports/*.json
+reports/**/*.csv
+reports/**/*.json

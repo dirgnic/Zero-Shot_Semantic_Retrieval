@@ -11,12 +11,18 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from romansh_retrieval.config import DEFAULT_MODEL, SPLITS, all_pairs
+from romansh_retrieval.config import (
+    DEFAULT_MAX_SEQ_LENGTH,
+    DEFAULT_MODELS,
+    SPLITS,
+    all_pairs,
+)
 from romansh_retrieval.data import load_split, make_pairs
 from romansh_retrieval.eval import eval_pair
+from romansh_retrieval.methods import load_embedding_model
 
 
-def parse_args():
+def parse_args(argv=None):
     parser = argparse.ArgumentParser(description="Run Romansh retrieval experiments.")
     parser.add_argument("--split", default="validation", choices=SPLITS)
     parser.add_argument("--data-dir", default="data/raw")
@@ -32,11 +38,29 @@ def parse_args():
         default=["tfidf"],
         choices=["tfidf", "embeddings"],
     )
-    parser.add_argument("--model", default=DEFAULT_MODEL)
+    model_group = parser.add_mutually_exclusive_group()
+    model_group.add_argument("--model", help="Run one embedding model (legacy option).")
+    model_group.add_argument(
+        "--models",
+        nargs="+",
+        help="Embedding model IDs. Defaults to multilingual MiniLM and raw XLM-R.",
+    )
+    parser.add_argument(
+        "--max-seq-length",
+        type=int,
+        default=DEFAULT_MAX_SEQ_LENGTH,
+        help="Maximum tokens for every embedding model (default: 128).",
+    )
+    parser.add_argument("--device", help="Embedding device, e.g. cpu, cuda, or mps.")
     parser.add_argument("--max-rows", type=int, default=1000)
     parser.add_argument("--batch-size", type=int, default=128)
     parser.add_argument("--seed", type=int, default=13)
-    return parser.parse_args()
+    args = parser.parse_args(argv)
+    model_names = [args.model] if args.model else (args.models or DEFAULT_MODELS)
+    args.models = list(dict.fromkeys(model_names))
+    if args.batch_size < 1 or args.max_seq_length < 1 or args.max_rows < 0:
+        parser.error("batch size and max sequence length must be positive; max rows >= 0")
+    return args
 
 
 def parse_pairs(value: str):
@@ -52,37 +76,62 @@ def parse_pairs(value: str):
     return tuple(pairs)
 
 
+def run_experiments(frame: pd.DataFrame, args) -> list[dict]:
+    max_rows = None if args.max_rows == 0 else args.max_rows
+    rows = []
+    directions = parse_pairs(args.pairs)
+
+    for method in dict.fromkeys(args.methods):
+        model_names = args.models if method == "embeddings" else [None]
+        for model_name in model_names:
+            # Reuse one loaded model across all directions, then release it before
+            # loading the next. Sampling uses the same rows and seed for each model.
+            model = (
+                load_embedding_model(
+                    model_name, max_seq_length=args.max_seq_length, device=args.device
+                )
+                if method == "embeddings"
+                else None
+            )
+            for src, tgt in directions:
+                pairs = make_pairs(frame, src, tgt, max_rows=max_rows, seed=args.seed)
+                if pairs.empty:
+                    print(f"skip {src}->{tgt}: no aligned rows")
+                    continue
+
+                label = model_name or "char_tfidf"
+                print(f"running {method} [{label}]: {src}->{tgt} ({len(pairs):,} rows)")
+                result = eval_pair(
+                    pairs,
+                    method=method,
+                    model_name=model_name,
+                    batch_size=args.batch_size,
+                    embedding_model=model,
+                )
+                for row in result:
+                    row.update(
+                        {
+                            "split": args.split,
+                            "method": method,
+                            "src": src,
+                            "tgt": tgt,
+                            "model": label,
+                            "max_seq_length": (
+                                args.max_seq_length if method == "embeddings" else None
+                            ),
+                            "similarity": "cosine",
+                            "seed": args.seed,
+                        }
+                    )
+                rows.extend(result)
+            del model
+    return rows
+
+
 def main():
     args = parse_args()
     frame = load_split(args.split, args.data_dir)
-    max_rows = None if args.max_rows == 0 else args.max_rows
-    rows = []
-
-    for src, tgt in parse_pairs(args.pairs):
-        pairs = make_pairs(frame, src, tgt, max_rows=max_rows, seed=args.seed)
-        if pairs.empty:
-            print(f"skip {src}->{tgt}: no aligned rows")
-            continue
-
-        for method in args.methods:
-            print(f"running {method}: {src}->{tgt} ({len(pairs):,} rows)")
-            result = eval_pair(
-                pairs,
-                method=method,
-                model_name=args.model,
-                batch_size=args.batch_size,
-            )
-            for row in result:
-                row.update(
-                    {
-                        "split": args.split,
-                        "method": method,
-                        "src": src,
-                        "tgt": tgt,
-                        "model": args.model if method == "embeddings" else "char_tfidf",
-                    }
-                )
-            rows.extend(result)
+    rows = run_experiments(frame, args)
 
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)

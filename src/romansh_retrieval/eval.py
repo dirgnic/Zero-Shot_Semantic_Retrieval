@@ -32,6 +32,7 @@ def eval_pair(
     method: str,
     model_name: str | None = None,
     batch_size: int = 128,
+    embedding_model=None,
 ) -> list[dict]:
     pairs, thresholds = add_overlap_buckets(pairs)
     queries = pairs["src_text"].tolist()
@@ -43,7 +44,11 @@ def eval_pair(
         if not model_name:
             raise ValueError("model_name is required for embedding evaluation.")
         query_vecs, cand_vecs = embedding_vectors(
-            queries, candidates, model_name=model_name, batch_size=batch_size
+            queries,
+            candidates,
+            model_name=model_name,
+            batch_size=batch_size,
+            model=embedding_model,
         )
     else:
         raise ValueError("method must be 'tfidf' or 'embeddings'.")

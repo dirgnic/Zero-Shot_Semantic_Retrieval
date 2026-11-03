@@ -13,15 +13,11 @@ def parse_args():
     return parser.parse_args()
 
 
-def main():
-    args = parse_args()
-    report = Path(args.report)
-    frame = pd.read_csv(report)
-    if frame.empty:
-        raise SystemExit(f"{report} is empty")
-
-    summary = (
-        frame.groupby(["method", "bucket"], as_index=False)
+def summarize_report(frame: pd.DataFrame) -> pd.DataFrame:
+    # Embedding models share a method name; never average their scores together.
+    groups = ["method", "model", "bucket"]
+    return (
+        frame.groupby(groups, as_index=False)
         .agg(
             pairs=("src", "count"),
             rows=("n", "sum"),
@@ -29,8 +25,18 @@ def main():
             mrr=("mrr", "mean"),
             mean_rank=("mean_rank", "mean"),
         )
-        .sort_values(["method", "bucket"])
+        .sort_values(groups)
     )
+
+
+def main():
+    args = parse_args()
+    report = Path(args.report)
+    frame = pd.read_csv(report)
+    if frame.empty:
+        raise SystemExit(f"{report} is empty")
+
+    summary = summarize_report(frame)
     print(summary.to_string(index=False))
 
 
