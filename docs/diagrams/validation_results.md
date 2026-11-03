@@ -1,29 +1,57 @@
 # Validation Results Diagrams
 
-These diagrams summarize the current TF-IDF validation smoke run:
+## Three-system smoke check
+
+`make smoke-embeddings` evaluates all three systems on the same 20 aligned
+Sursilvan → Vallader queries and 20 candidates from the Mediomatix validation
+split. The sample uses seed 13 and a 128-token limit for the embedding models.
+
+```mermaid
+xychart-beta
+    title "Recall@1 on 20 Sursilvan to Vallader queries"
+    x-axis ["TF-IDF", "MiniLM", "XLM-R"]
+    y-axis "Recall@1" 0 --> 1
+    bar [0.95, 0.85, 0.65]
+```
+
+| System | Correct at rank 1 | Recall@1 | MRR |
+| --- | ---: | ---: | ---: |
+| Character TF-IDF | 19 of 20 | 0.950 | 0.975 |
+| Multilingual MiniLM | 17 of 20 | 0.850 | 0.892 |
+| Pretrained XLM-R | 13 of 20 | 0.650 | 0.749 |
+
+With the dependencies and validation data set up, rerun the smoke check and
+summarize its CSV by model and overlap bucket.
+
+```bash
+make smoke-embeddings
+python3 scripts/summarize_report.py reports/smoke_embeddings/retrieval_validation.csv
+```
+
+## TF-IDF validation across 20 idiom directions
+
+This run evaluates character TF-IDF on 500 aligned rows per direction, for
+10,000 retrieval queries. The figures in this section use that sample.
 
 ```bash
 python3 scripts/run_retrieval.py --split validation --methods tfidf --max-rows 500
 ```
 
-The run covers all 20 ordered source-target idiom pairs with 500 aligned rows
-per pair, for 10,000 retrieval queries in total.
-
-## Classification Blob View
+### Classification blob view
 
 ![Lexical-overlap classification blobs](assets/classification_blobs.svg)
 
 This view shows the bucket assignment visually: rows are first separated by
 their pair-specific lexical-overlap quantiles, then each bucket is evaluated.
 
-## Result Blob View
+### Result blob view
 
 ![TF-IDF validation results by overlap bucket](assets/result_blobs.svg)
 
-The bucket sizes are similar, but the retrieval quality is not: the low-overlap
-blob has much lower Recall@1 and a much higher mean rank.
+TF-IDF Recall@1 drops from 0.978 in the high-overlap bucket to 0.540 in the
+low-overlap bucket.
 
-## PCR: Validation Run
+### Process, classification, and results
 
 ```mermaid
 flowchart LR
@@ -31,7 +59,7 @@ flowchart LR
     C --> R["Results<br/>TF-IDF Recall@1<br/>low: 0.540<br/>mid: 0.923<br/>high: 0.978<br/>overall: 0.815"]
 ```
 
-## Recall@1 By Overlap Bucket
+### Recall@1 by overlap bucket
 
 ```mermaid
 xychart-beta
@@ -41,7 +69,7 @@ xychart-beta
     bar [0.540, 0.923, 0.978, 0.815]
 ```
 
-## MRR By Overlap Bucket
+### MRR by overlap bucket
 
 ```mermaid
 xychart-beta
@@ -51,7 +79,7 @@ xychart-beta
     bar [0.628, 0.951, 0.986, 0.856]
 ```
 
-## Mean Rank By Overlap Bucket
+### Mean rank by overlap bucket
 
 ```mermaid
 xychart-beta
@@ -61,7 +89,7 @@ xychart-beta
     bar [20.47, 1.22, 1.05, 7.52]
 ```
 
-## Row Distribution
+### Row distribution
 
 ```mermaid
 pie showData
@@ -71,7 +99,7 @@ pie showData
     "high" : 3302
 ```
 
-## Easiest And Hardest Directions
+### Easiest and hardest directions
 
 ```mermaid
 flowchart TD
@@ -85,7 +113,7 @@ flowchart TD
     C --> C3["rm-surmiran -> rm-vallader<br/>Recall@1 0.744<br/>MRR 0.803"]
 ```
 
-## Low-Overlap Stress Cases
+### Low-overlap stress cases
 
 ```mermaid
 flowchart TD
@@ -95,7 +123,7 @@ flowchart TD
     A --> E["rm-puter -> rm-surmiran<br/>0.412"]
 ```
 
-## Summary Table
+### Summary table
 
 | Bucket | Rows | Recall@1 | MRR | Mean rank |
 | --- | ---: | ---: | ---: | ---: |
@@ -103,10 +131,3 @@ flowchart TD
 | low | 3,300 | 0.540 | 0.628 | 20.47 |
 | mid | 3,398 | 0.923 | 0.951 | 1.22 |
 | high | 3,302 | 0.978 | 0.986 | 1.05 |
-
-## Main Takeaway
-
-TF-IDF is already very strong when idioms share spelling patterns. The low-overlap
-bucket is the real stress test: performance drops sharply there, which supports
-the project motivation for comparing lexical retrieval against semantic
-zero-shot embeddings.

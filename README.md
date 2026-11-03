@@ -55,10 +55,10 @@ This makes the RQ2 comparison explicit before model scoring.
 
 ## Diagrams
 
-Mind-map, process-flow, and overlap-classification diagrams are in
-[`docs/diagrams/retrieval_pipeline.md`](docs/diagrams/retrieval_pipeline.md).
-TF-IDF validation-result diagrams are in
-[`docs/diagrams/validation_results.md`](docs/diagrams/validation_results.md).
+- See how TF-IDF, MiniLM, and XLM-R share the same data and evaluation.
+  [Retrieval pipeline diagrams](docs/diagrams/retrieval_pipeline.md)
+- See the three-system smoke check and the 20-direction TF-IDF results.
+  [Validation result diagrams](docs/diagrams/validation_results.md)
 
 ## Setup
 
