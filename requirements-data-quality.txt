@@ -1,0 +1,5 @@
+-r requirements.txt
+datasets>=2.18
+huggingface_hub>=0.22
+fasttext-predict-v2
+jupyterlab>=4

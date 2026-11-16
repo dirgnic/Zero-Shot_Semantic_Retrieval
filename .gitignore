@@ -22,3 +22,19 @@ venv/
 .DS_Store
 Thumbs.db
 *.log
+
+# Retrieval pipeline rules (preserved from its branch)
+__pycache__/
+*.py[cod]
+.venv/
+.DS_Store
+
+data/raw/*.parquet
+data/raw/*.tmp
+reports/**/*.csv
+reports/**/*.json
+
+# Exported fine-tuning inputs
+/data/train.jsonl
+/data/valid.jsonl
+/data/test.jsonl

@@ -1,0 +1,7 @@
+-r requirements.txt
+-r requirements-embeddings.txt
+sentencepiece>=0.2
+matplotlib>=3.5
+tqdm>=4.65
+ipython>=8
+jupyterlab>=4
