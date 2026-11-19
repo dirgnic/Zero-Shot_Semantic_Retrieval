@@ -1,19 +1,22 @@
-# Zero-Shot_Semantic_Retrieval
-This project compares lexical similarity with semantic similarity for these aligned segments. Character n-gram TF-IDF will measure how much corresponding segments resemble each other in spelling and shared character sequences. 
+# Romansh cross-idiom retrieval
 
+Given a passage in one Romansh idiom, this project ranks passages in another to recover the aligned counterpart. It uses Mediomatix schoolbook passages for retrieval and a separate La Quotidiana newspaper corpus for the cleaning audit.
 
-## Integrated project
+**Start with the [interactive pipeline notebook](notebooks/retrieval_playground.ipynb).** Explore the annotated cleaning audit, rank live Mediomatix candidates, and compare recorded held-out results by lexical overlap. The notebook includes JupyterLab setup instructions. Live fine-tuned retrieval requires a local checkpoint.
 
-The repository brings together three complementary workstreams:
+## Team contributions
 
-| Workstream | Entry point | Data and role |
-| --- | --- | --- |
-| Corpus quality | [Text preprocessing notebook](data_quality/ETSP%20Text%20Preprocessing%20Pipeline.ipynb) | `ZurichNLP/quotidiana`, configuration `1997_2008`: repairs, filtering, duplicate/language checks and manual audit. |
-| Lexical and zero-shot retrieval | [Retrieval package](src/romansh_retrieval/) and [experiment runner](scripts/run_retrieval.py) | Aligned `ZurichNLP/mediomatix`: character TF-IDF, multilingual MiniLM and pretrained XLM-R, evaluated over the five idioms. |
-| Task-specific adaptation | [Fine-tuning notebook](notebooks/finetuning_mediomatix.ipynb) | XLM-R contrastive training on Mediomatix, validation-based checkpoint selection, and held-out comparison with zero-shot XLM-R and TF-IDF. |
+| Member | Contribution |
+| --- | --- |
+| Sushant Gupta | Developed the La Quotidiana preprocessing pipeline, including text repair, filtering, duplicate and language checks, and a manual audit of flagged examples. [Cleaning notebook](data_quality/ETSP%20Text%20Preprocessing%20Pipeline.ipynb) |
+| Ingrid-Adriana Corobana | Implemented the aligned Mediomatix retrieval pipeline across 20 directions, the character TF-IDF, MiniLM and pretrained XLM-R baselines, and the analysis by lexical overlap. [Retrieval package](src/romansh_retrieval/) |
+| Marcos Galdona Peñacoba | Implemented contrastive XLM-R fine-tuning, selected checkpoints using validation performance, and evaluated fine-tuned XLM-R against pretrained XLM-R and TF-IDF on the held-out set. [Fine-tuning notebook](notebooks/finetuning_mediomatix.ipynb) |
 
-The news-corpus study is complementary. Its unaligned articles are not silently
-substituted for the aligned schoolbook segments used for retrieval and training.
+## Evidence for the report criteria
+
+- **NLP question and findings.** The experiments test whether multilingual encoders recover aligned passages that share little spelling. On the held-out test set, fine-tuned XLM-R reached 78.34% Recall@1 overall versus 39.92% before fine-tuning. TF-IDF scored higher than fine-tuned XLM-R in the high-overlap group (93.48% versus 86.90%). [Recorded results](results/test_summary.csv)
+- **Reproducibility.** The runner uses the published splits and records the sampling seed and model settings. The [validation documentation](docs/diagrams/validation_results.md) gives the commands and candidate pool sizes. The [data-quality audit](data_quality/audit_sample_labeled.csv) records the human judgments behind the cleaning study.
+- **Software engineering.** Data preparation, model scoring, overlap grouping, and metrics live in separate modules. Setup commands below document the workflow, and `make test` checks retrieval logic and integration without downloading checkpoints.
 
 ### Preserved branch documentation
 
