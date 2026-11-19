@@ -133,6 +133,4 @@ activates those existing rules for future generated files.
   and empty-bucket metrics against the notebook's pure definitions, without
   executing download/training cells.
 
-[Protocol diagrams](docs/diagrams/retrieval_pipeline.md) and
-[documented validation results](docs/diagrams/validation_results.md) remain
-available alongside the preserved fine-tuning CSVs and corpus-quality reports.
+See the [retrieval protocol and validation results](docs/diagrams/validation_results.md) for experiment settings and baseline metrics.
