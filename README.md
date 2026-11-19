@@ -14,7 +14,7 @@ Given a passage in one Romansh idiom, this project ranks passages in another to 
 
 ## Evidence for the report criteria
 
-- **NLP question and findings.** The experiments test whether multilingual encoders recover aligned passages that share little spelling. On the held-out test set, fine-tuned XLM-R reached 78.34% Recall@1 overall versus 39.92% before fine-tuning. TF-IDF scored higher than fine-tuned XLM-R in the high-overlap group (93.48% versus 86.90%). [Recorded results](results/test_summary.csv)
+- **NLP question and findings.** The experiments test whether multilingual encoders recover aligned passages that share little spelling. On the held-out test set, fine-tuned XLM-R reached 78.34% Recall@1 overall versus 39.92% before fine-tuning. TF-IDF scored higher than fine-tuned XLM-R in the high-overlap group (93.48% versus 86.90%). [XLM-R results](results/test_summary.csv) · [Full comparison in the report](https://www.overleaf.com/project/6aee0c96cbcd361b1fc008b5)
 - **Reproducibility.** The runner uses the published splits and records the sampling seed and model settings. The [validation documentation](docs/diagrams/validation_results.md) gives the commands and candidate pool sizes. The [data-quality audit](data_quality/audit_sample_labeled.csv) records the human judgments behind the cleaning study.
 - **Software engineering.** Data preparation, model scoring, overlap grouping, and metrics live in separate modules. Setup commands below document the workflow, and `make test` checks retrieval logic and integration without downloading checkpoints.
 
