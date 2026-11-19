@@ -18,21 +18,6 @@ Given a passage in one Romansh idiom, this project ranks passages in another to 
 - **Reproducibility.** The runner uses the published splits and records the sampling seed and model settings. The [validation documentation](docs/diagrams/validation_results.md) gives the commands and candidate pool sizes. The [data-quality audit](data_quality/audit_sample_labeled.csv) records the human judgments behind the cleaning study.
 - **Software engineering.** Data preparation, model scoring, overlap grouping, and metrics live in separate modules. Setup commands below document the workflow, and `make test` checks retrieval logic and integration without downloading checkpoints.
 
-### Preserved branch documentation
-
-Each original branch README is retained verbatim in its own root-level file,
-so its relative links continue to resolve:
-
-- [Original main README](README.main.md)
-- [Original fine-tuning README](README.fine_tuning.md)
-- [Original retrieval-pipeline README](README.retrieval_pipeline.md)
-
-The main and fine-tuning versions were identical at integration time. The older
-retrieval README describes a planned `mediomatix-raw` quality study; the actual
-quality notebook now included here uses **La Quotidiana** as shown above.
-See the [branch integration record](docs/branch-integration.md) for source
-commits, conflict decisions and preservation checks.
-
 ## Install and check
 
 Run commands from the repository root. A separate virtual environment keeps the
@@ -92,7 +77,8 @@ The first embedding run downloads the selected checkpoints. Each encoder is
 loaded once across directions. Reports retain model names and settings; the
 summary keeps different models separate. Choose a **fresh output directory**
 for each run because the existing runner names its CSV/JSON files by split.
-See the preserved retrieval README for single-model, device and full-split flags.
+Use `--model MODEL` for one encoder or `--models MODEL_A MODEL_B` for a custom list.
+Use `--device cpu` to run on CPU and `--max-rows 0` to use all aligned rows in the chosen split.
 
 ## Run fine-tuning
 

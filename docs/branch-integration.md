@@ -22,14 +22,7 @@ source branch.
   Notebook outputs and cell metadata are retained.
 - Retrieval source files, existing tests, diagrams, base requirements and
   optional embedding requirements remain byte-identical.
-- The root `README.md` begins with the complete original main README, followed
-  by the integrated project guide. Each branch README is also preserved
-  verbatim at the repository root as `README.main.md`,
-  `README.fine_tuning.md`, and `README.retrieval_pipeline.md`. This keeps the
-  original relative links working; the main and fine-tuning versions are
-  identical but have separate provenance.
-  Their original trailing whitespace is retained too; these two verbatim
-  snapshots are excluded from the integration whitespace check.
+- The integration originally preserved three branch README snapshots. They remain accessible in [the last revision before documentation cleanup](https://github.com/dirgnic/Zero-Shot_Semantic_Retrieval/tree/63f0540534840d7957f7d4b8a74b9e025c90c05b). The root README now contains the current project instructions.
 - The add/add conflict in `.gitignore` is resolved by retaining both entire
   rule sets, plus ignore rules for generated JSONL inputs. No pattern was
   discarded. The original non-dot `data_quality/gitignore` stays in place;
