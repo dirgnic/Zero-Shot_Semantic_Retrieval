@@ -2,13 +2,16 @@
 <html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Romansh Retrieval Lab</title>
 <style>
 :root{font:17px/1.55 system-ui;color:#152925;background:#f6f4ee}*{box-sizing:border-box}body{margin:0}main,nav{max-width:1100px;margin:auto;padding:24px}nav{display:flex;justify-content:space-between;border-bottom:1px solid #b8c4ba}a{color:#075b4c}header{padding:65px 0 35px}h1{font:clamp(3rem,8vw,6rem)/.95 Georgia;margin:0;letter-spacing:-.055em}h2{font:2rem Georgia;margin:0}section{border-top:1px solid #b8c4ba;padding:32px 0}small,.muted{color:#455c55}button,select{font:inherit;padding:8px 12px;background:white;border:1px solid #657e71;border-radius:4px;color:inherit}button{cursor:pointer}button[aria-pressed=true]{background:#124e42;color:white}.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:20px 0}.note{background:#e2efe7;padding:16px;border-left:4px solid #176650}.controls{display:flex;gap:14px;flex-wrap:wrap;margin:16px 0}.row{display:grid;grid-template-columns:minmax(110px,1fr) 2fr 66px;gap:12px;align-items:center;margin:10px 0}.track{background:#eceae2;height:16px;display:flex;overflow:hidden}.bar{height:100%;background:#267864}.bad{background:#9e402d}.alt{background:#53679a}.gold{color:#075b4c;font-weight:bold}footer{padding:24px 0;border-top:1px solid #b8c4ba}@media(max-width:480px){main,nav{padding:16px}.row{gap:7px;font-size:.85rem;grid-template-columns:105px 1fr 53px}}
-</style>
+.inspector{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(240px,100%),1fr));gap:18px;margin:18px 0}.panel{border:1px solid #b8c4ba;background:#fffdf8;padding:18px}.panel h3{margin:0 0 8px}.panel ol{margin:8px 0;padding-left:25px}.panel code{white-space:pre}.stat{font:2.4rem Georgia;margin:0}.sliders{display:flex;flex-wrap:wrap;gap:20px}.sliders label{display:grid}.toc{margin-top:20px;display:flex;gap:18px;flex-wrap:wrap}.method{padding:10px 0}.caption{font-size:.9rem;color:#455c55}</style>
 <nav><strong>Romansh Retrieval Lab</strong><a href="https://github.com/dirgnic/Zero-Shot_Semantic_Retrieval">GitHub ↗</a></nav>
-<main><header><h1>Find the<br>aligned passage.</h1><p>Explore how a retrieval system matches schoolbook passages across five Romansh varieties, then see where fine-tuning changes the outcome.</p></header>
+<main><header><h1>Find the<br>aligned passage.</h1><p>Explore how a retrieval system matches schoolbook passages across five Romansh varieties, then see where fine-tuning changes the outcome.</p><div class="toc"><a href="#scoring">Inspect a score</a><a href="#evaluation">Try the metrics</a><a href="#results">Read the results</a></div></header>
 <section><h2>Trace the pipeline</h2><div class="steps" id="steps"></div><p class="note" id="stage" aria-live="polite"></p></section>
-<section><h2>Rank a query in the browser</h2><p class="muted">Synthetic examples for learning the scoring mechanics. The browser recomputes character 3–5-gram TF-IDF and cosine similarity. The research notebook uses the actual Mediomatix data, with separate dense-model options.</p><div class="controls"><label>Example <select id="query"></select></label><label>Candidate pool <select id="pool"><option value="6">6 passages</option><option value="3">3 passages</option></select></label></div><p id="source"></p><div id="ranks" aria-live="polite"></div></section>
+<section id="scoring"><h2>Rank a query in the browser</h2><p class="muted">Synthetic examples for learning the scoring mechanics. The browser recomputes character 3–5-gram TF-IDF and cosine similarity. The research notebook uses the actual Mediomatix data, with separate dense-model options.</p><div class="controls"><label>Example <select id="query"></select></label><label>Candidate pool <select id="pool"><option value="6">6 passages</option><option value="3">3 passages</option></select></label></div><p id="source"></p><div id="ranks" aria-live="polite"></div>
+<div class="inspector"><div class="panel"><h3>Inspect the score</h3><label>Candidate <select id="candidate"></select></label><p id="pair-summary" aria-live="polite"></p><p class="caption">Jaccard counts shared features. Cosine weights each feature by how often it appears and how rare it is across the pool.</p></div><div class="panel"><h3>Features driving the match</h3><ol id="features"></ol><p class="caption">Spaces are shown as ␣. Each value is one feature’s contribution to the cosine score. The list shows up to eight contributions.</p></div></div>
+<details><summary>Why can changing the pool change the scores?</summary><p>Inverse document frequency is fitted on both the source and target texts in the selected pool. Changing that pool changes feature rarity and the distractors that compete for first place.</p></details></section>
+<section id="evaluation"><h2>Turn ranks into evaluation metrics</h2><p>Move the aligned match for each of four hypothetical queries. Recall@1 only changes when a match enters or leaves first place. MRR also changes when a match moves between lower ranks.</p><div class="sliders" id="sliders"></div><div class="inspector"><div class="panel"><h3>Recall@1</h3><p class="stat" id="recall"></p><p id="hits"></p></div><div class="panel"><h3>Mean reciprocal rank</h3><p class="stat" id="mrr"></p><p id="reciprocals"></p></div></div></section>
 <section><h2>Inspect the newspaper audit</h2><p>La Quotidiana is the separate cleaning study. Counts show reviewed samples by flag; rust segments indicate incorrect classifications.</p><div id="audit"></div></section>
-<section><h2>Compare the held-out benchmark</h2><p>Recorded test results for TF-IDF and both XLM-R variants. Fine-tuned XLM-R leads on low-overlap Recall@1, while TF-IDF leads on high-overlap Recall@1.</p><div class="controls"><label>Lexical overlap <select id="bucket"><option value="all">Overall</option><option value="low">Low</option><option value="mid">Medium</option><option value="high">High</option></select></label><label>Metric <select id="metric"><option value="2">Recall@1</option><option value="3">Mean reciprocal rank</option></select></label></div><div id="benchmark" aria-live="polite"></div></section>
+<section id="results"><h2>Compare the held-out benchmark</h2><p>Recorded test results for TF-IDF and both XLM-R variants. Fine-tuned XLM-R leads on low-overlap Recall@1, while TF-IDF leads on high-overlap Recall@1.</p><div class="controls"><label>Lexical overlap <select id="bucket"><option value="all">Overall</option><option value="low">Low</option><option value="mid">Medium</option><option value="high">High</option></select></label><label>Metric <select id="metric"><option value="2">Recall@1</option><option value="3">Mean reciprocal rank</option></select></label></div><div id="benchmark" aria-live="polite"></div><p class="note" id="benchmark-note" aria-live="polite"></p><details><summary>How to compare these numbers</summary><p>The 20 ordered directions come from five varieties. Within each direction, the notebook uses the 33rd and 67th percentiles of aligned pair overlap for the low and high cutoffs. The benchmark reports macro averages across directions. Low, medium and high are relative to each direction.</p><p>TF-IDF uses character features. Zero-shot XLM-R uses a pretrained encoder. Fine-tuned XLM-R adapts that encoder to the aligned training pairs before held-out evaluation.</p><a href="https://github.com/dirgnic/Zero-Shot_Semantic_Retrieval/blob/main/docs/diagrams/validation_results.md">Retrieval protocol and validation results ↗</a></details></section>
 <footer><a href="https://github.com/dirgnic/Zero-Shot_Semantic_Retrieval/blob/main/notebooks/retrieval_playground.ipynb">Open the research notebook ↗</a></footer></main>
 <script>
 const results=[["XLM-R fine-tuned","all",0.7834127668891417,0.8359226649551357],["XLM-R fine-tuned","high",0.8689606017315633,0.9169882809779372],["XLM-R fine-tuned","low",0.5893422327837612,0.6646767054115876],["XLM-R fine-tuned","mid",0.8893537644286955,0.9239617072141684],["XLM-R zero-shot","all",0.3991743494617752,0.45054822895983104],["XLM-R zero-shot","high",0.7119794443026198,0.7592871921217547],["XLM-R zero-shot","low",0.13775895217168377,0.17964800567344386],["XLM-R zero-shot","mid",0.3488387219572543,0.41346196442076694],["TF-IDF","all",0.702,0.7571],["TF-IDF","low",0.3507,0.4336],["TF-IDF","mid",0.8175,0.8767],["TF-IDF","high",0.9348,0.958]], audits={"__kept__":[20,0],"edited_reprint":[19,1],"empty":[3,0],"fragmented_tokens":[20,0],"garbled_extraction":[19,1],"near_duplicate":[19,1],"too_long":[4,0],"too_short":[20,0]};
@@ -23,8 +26,43 @@ function rank(){const id=Number(get("query").value),size=Number(get("pool").valu
 const banks=[...ids.map(i=>grams(pairs[i][0])),...ids.map(i=>grams(pairs[i][1]))];const df=new Map();
 for(const map of banks)for(const key of map.keys())df.set(key,(df.get(key)||0)+1);
 function vector(map){const v=new Map(Array.from(map,([key,count])=>[key,count*(1+Math.log((1+banks.length)/(1+df.get(key))))]));const norm=Math.hypot(...v.values())||1;return new Map(Array.from(v,([key,value])=>[key,value/norm]));}
-const q=vector(banks[0]);const ranked=ids.map((i,j)=>[i,Math.min(1,[...vector(banks[j+size])].reduce((s,[k,v])=>s+v*(q.get(k)||0),0))]).sort((a,b)=>b[1]-a[1]);get("source").textContent="Query: "+pairs[id][0]+" · aligned target: "+pairs[id][1];get("ranks").innerHTML=ranked.map(([i,s])=>row(pairs[i][1]+(i===id?" · aligned":""),s*100,s.toFixed(3),i===id?"gold":"")).join("");}
-function draw(){const ix=Number(get("metric").value);get("benchmark").innerHTML=results.filter(x=>x[1]===get("bucket").value).sort((a,b)=>b[ix]-a[ix]).map(x=>row(x[0],x[ix]*100,ix===2?(100*x[ix]).toFixed(1)+"%":x[ix].toFixed(3))).join("");}
+const q=vector(banks[0]);const ranked=ids.map((i,j)=>[i,Math.min(1,[...vector(banks[j+size])].reduce((s,[k,v])=>s+v*(q.get(k)||0),0))]).sort((a,b)=>b[1]-a[1]);get("source").textContent="Query: "+pairs[id][0]+" · aligned target: "+pairs[id][1];get("ranks").innerHTML=ranked.map(([i,s])=>row(pairs[i][1]+(i===id?" · aligned":""),s*100,s.toFixed(3),i===id?"gold":"")).join("");
+const selector=get("candidate");
+selector.replaceChildren(...ranked.map(([i])=>new Option(pairs[i][1],i)));
+selector.value=String(id);
+selector.onchange=()=>{
+  const chosen=Number(selector.value),j=ids.indexOf(chosen);
+  const target=banks[j+size], weighted=vector(target);
+  const shared=[...target.keys()].filter(key=>q.has(key));
+  const union=new Set([...q.keys(),...target.keys()]);
+  const score=ranked.find(([i])=>i===chosen)[1];
+  get("pair-summary").textContent="Cosine "+score.toFixed(3)+" · feature overlap "+shared.length+"/"+union.size+" ("+(shared.length/union.size*100).toFixed(1)+"%)";
+  const features=shared.map(key=>[key,q.get(key)*weighted.get(key)]).sort((a,b)=>b[1]-a[1]);
+  get("features").replaceChildren(...(features.length?features.slice(0,8).map(([key,value])=>key.replaceAll(" ","␣")+" · "+value.toFixed(3)):["No shared features"]).map(text=>{const li=document.createElement("li");li.textContent=text;return li;}));
+};
+selector.onchange();
+}
+function draw(){const ix=Number(get("metric").value);get("benchmark").innerHTML=results.filter(x=>x[1]===get("bucket").value).sort((a,b)=>b[ix]-a[ix]).map(x=>row(x[0],x[ix]*100,ix===2?(100*x[ix]).toFixed(1)+"%":x[ix].toFixed(3))).join("");
+const shown=results.filter(x=>x[1]===get("bucket").value);
+const tuned=shown.find(x=>x[0]==="XLM-R fine-tuned")[ix], zero=shown.find(x=>x[0]==="XLM-R zero-shot")[ix], lexical=shown.find(x=>x[0]==="TF-IDF")[ix];
+const delta=(a,b)=> (a>=b?"+":"−")+(Math.abs(a-b)*(ix===2?100:1)).toFixed(ix===2?1:3)+(ix===2?" percentage points":" MRR");
+get("benchmark-note").textContent="Fine-tuned XLM-R relative to zero-shot: "+delta(tuned,zero)+". Relative to TF-IDF: "+delta(tuned,lexical)+".";
+}
 get("audit").innerHTML=Object.entries(audits).map(([key,[good,bad]])=>row(key==="__kept__"?"Kept":key.replaceAll("_"," "),good*5,good+" / "+(good+bad),"",bad*5)).join("");
 for(const id of ["query","pool"])get(id).onchange=rank;for(const id of ["bucket","metric"])get(id).onchange=draw;rank();draw();
+const sliders=[1,2,4,1].map((value,i)=>{
+ const label=document.createElement("label");label.textContent="Query "+(i+1);
+ const input=document.createElement("input");Object.assign(input,{type:"range",min:1,max:10,value});
+ const output=document.createElement("output");label.append(input,output);get("sliders").append(label);return [input,output];
+});
+function evaluate(){
+ const ranks=sliders.map(([input,output])=>{output.textContent="Rank "+input.value;return Number(input.value);});
+ const hits=ranks.filter(r=>r===1).length;
+ get("recall").textContent=(hits/ranks.length*100).toFixed(0)+"%";
+ get("hits").textContent=hits+" of "+ranks.length+" matches ranked first";
+ get("mrr").textContent=(ranks.reduce((sum,r)=>sum+1/r,0)/ranks.length).toFixed(3);
+ get("reciprocals").textContent="Average of "+ranks.map(r=>"1/"+r).join(", ");
+}
+for(const [input] of sliders)input.oninput=evaluate;
+evaluate();
 </script></html>
