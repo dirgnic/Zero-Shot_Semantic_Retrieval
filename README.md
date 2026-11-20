@@ -2,6 +2,8 @@
 
 Given a passage in one Romansh idiom, this project ranks passages in another to recover the aligned counterpart. It uses Mediomatix schoolbook passages for retrieval and a separate La Quotidiana newspaper corpus for the cleaning audit.
 
+**Visual walkthrough:** [GitHub Pages source branch](https://github.com/dirgnic/Zero-Shot_Semantic_Retrieval/tree/visual-pipeline/docs) · [HTML entry point](https://github.com/dirgnic/Zero-Shot_Semantic_Retrieval/blob/visual-pipeline/docs/index.html). The site includes a clickable pipeline, an illustrative TF-IDF ranking demo, and recorded audit and benchmark charts. To publish with GitHub Pages, select `visual-pipeline` and `/docs` as the source.
+
 **Start with the [interactive pipeline notebook](notebooks/retrieval_playground.ipynb).** Explore the annotated cleaning audit, rank live Mediomatix candidates, and compare recorded held-out results by lexical overlap. The notebook includes JupyterLab setup instructions. Live fine-tuned retrieval requires a local checkpoint.
 
 ## Team contributions
